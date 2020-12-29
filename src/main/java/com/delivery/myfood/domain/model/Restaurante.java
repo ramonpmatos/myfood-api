@@ -11,6 +11,8 @@ public class Restaurante {
 	@Id
 	private Long id;
 	
+	private String nome;
+	
 	private BigDecimal taxaFrete;
 
 	public Long getId() {
@@ -19,6 +21,14 @@ public class Restaurante {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public BigDecimal getTaxaFrete() {
