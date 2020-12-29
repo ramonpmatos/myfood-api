@@ -1,1 +1,1 @@
-# my-food
+# myfood-api
