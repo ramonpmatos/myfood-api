@@ -13,6 +13,7 @@ import com.delivery.myfood.domain.repository.CozinhaRepository;
 
 @Component
 public class CozinhaRepositoryImpl implements CozinhaRepository {
+	
 	@PersistenceContext
 	private EntityManager manager;
 

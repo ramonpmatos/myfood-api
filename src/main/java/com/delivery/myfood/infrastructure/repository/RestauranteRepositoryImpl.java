@@ -13,6 +13,7 @@ import com.delivery.myfood.domain.repository.RestauranteRepository;
 
 @Component
 public class RestauranteRepositoryImpl implements RestauranteRepository {
+
 	@PersistenceContext
 	private EntityManager manager;
 

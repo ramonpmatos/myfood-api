@@ -1,7 +1,5 @@
 package com.delivery.myfood.domain.model;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,21 +14,17 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Restaurante {
+public class Cidade {
 
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@Column(nullable = false)
 	private String nome;
-
-	@Column(nullable = false)
-	private BigDecimal taxaFrete;
-
+	
 	@ManyToOne
 	@JoinColumn(nullable = false)
-	private Cozinha cozinha;
-
+	private Estado estado;
 }
