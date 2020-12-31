@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.delivery.myfood.MyfoodApiApplication;
 import com.delivery.myfood.domain.model.Cozinha;
+import com.delivery.myfood.domain.repository.CozinhaRepository;
 
 public class AlteracaoCozinhaMain {
 
@@ -14,13 +15,13 @@ public class AlteracaoCozinhaMain {
 				.web(WebApplicationType.NONE)
 				.run(args);
 		
-		CadastroCozinha cadastroCozinha = applicationContext.getBean(CadastroCozinha.class);
+		CozinhaRepository cozinhaRepository = applicationContext.getBean(CozinhaRepository.class);
 		
 		Cozinha cozinha = new Cozinha();
 		cozinha.setId(1L);
 		cozinha.setNome("Brazileira");
 		
-		cadastroCozinha.salvar(cozinha);
+		cozinhaRepository.salvar(cozinha);
 		
 		
 	}
