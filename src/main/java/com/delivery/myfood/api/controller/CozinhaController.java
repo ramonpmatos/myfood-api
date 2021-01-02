@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.delivery.myfood.domain.exception.EntidadeEmUsoException;
+import com.delivery.myfood.domain.exception.EntidadeNaoEncontradaException;
 import com.delivery.myfood.domain.model.Cozinha;
 import com.delivery.myfood.domain.repository.CozinhaRepository;
 import com.delivery.myfood.domain.service.CadastroCozinhaService;
@@ -27,7 +29,7 @@ public class CozinhaController {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
-	
+
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
 
@@ -73,19 +75,15 @@ public class CozinhaController {
 
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
-		Cozinha cozinhaAtual = cozinhaRepository.buscar(cozinhaId);
-
 		try {
-			if (cozinhaAtual != null) {
-				cozinhaRepository.remover(cozinhaAtual);
+			cadastroCozinha.excluir(cozinhaId);
+			return ResponseEntity.noContent().build();
 
-				return ResponseEntity.noContent().build();
-			}
-
-			return ResponseEntity.notFound().build();
-			
-		} catch (DataIntegrityViolationException e) {
+		} catch (EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.notFound().build();
 		}
 
 	}
