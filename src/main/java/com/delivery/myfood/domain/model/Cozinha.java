@@ -20,5 +20,4 @@ public class Cozinha {
 	
 	private String nome;
 	
-	
 }
