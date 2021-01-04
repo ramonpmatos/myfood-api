@@ -7,12 +7,12 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.delivery.myfood.domain.model.Cidade;
 import com.delivery.myfood.domain.repository.CidadeRepository;
 
-@Component
+@Repository
 public class CidadeRepositoryImpl implements CidadeRepository {
 
 	@PersistenceContext
