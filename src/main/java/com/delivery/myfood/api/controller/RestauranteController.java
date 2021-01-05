@@ -23,6 +23,8 @@ import com.delivery.myfood.domain.exception.EntidadeNaoEncontradaException;
 import com.delivery.myfood.domain.model.Restaurante;
 import com.delivery.myfood.domain.repository.RestauranteRepository;
 import com.delivery.myfood.domain.service.CadastroRestauranteService;
+import com.delivery.myfood.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
+import com.delivery.myfood.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -101,17 +103,9 @@ public class RestauranteController {
 		return atualizar(restauranteId, restauranteAtual);
 	}
 	
-	@GetMapping("/teste")
-	public List<Restaurante> teste(String nome, 
-			BigDecimal taxaFreteInicial,BigDecimal taxaFreteFinal) {
-		return restauranteRepository.find(nome,taxaFreteInicial,taxaFreteFinal);
-	}
-	
 	private void  merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
-		
-//		System.out.println(restauranteOrigem.toString());
 		
 		dadosOrigem.forEach((nomePropriedade, valorPropriedade) ->{
 			Field field = org.springframework.util.ReflectionUtils.findField(Restaurante.class, nomePropriedade);
@@ -119,12 +113,24 @@ public class RestauranteController {
 			
 			Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
 			
-//			System.out.println(nomePropriedade +" = "+ valorPropriedade + " = " + novoValor);
 			
 			ReflectionUtils.setField(field, restauranteDestino, novoValor);
 			
-		});
+		});		
+	}
+	
+	@GetMapping("/teste")
+	public List<Restaurante> teste(String nome, 
+			BigDecimal taxaFreteInicial,BigDecimal taxaFreteFinal) {
+		return restauranteRepository.find(nome,taxaFreteInicial,taxaFreteFinal);
+	}
+	
+	@GetMapping("/com-frete-gratis")
+	public List<Restaurante> restauranteComFreteGratis(String nome) {
+		var comFreteGratis = new RestauranteComFreteGratisSpec(); 
+		var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
 		
+		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
 	}
 
 }
