@@ -1,8 +1,11 @@
 package com.delivery.myfood.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +101,12 @@ public class RestauranteController {
 		merge(campos, restauranteAtual);
 
 		return atualizar(restauranteId, restauranteAtual);
+	}
+	
+	@GetMapping("/teste")
+	public List<Restaurante> teste(String nome, 
+			BigDecimal taxaFreteInicial,BigDecimal taxaFreteFinal) {
+		return restauranteRepository.find(nome,taxaFreteInicial,taxaFreteFinal);
 	}
 	
 	private void  merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
