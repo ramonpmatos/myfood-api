@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,8 +126,12 @@ public class RestauranteController {
 	
 	@GetMapping("/com-frete-gratis")
 	public List<Restaurante> restauranteComFreteGratis(String nome) {
-		
 		return restauranteRepository.findComFreteGratis(nome);
+	}
+	
+	@GetMapping("/primeiro")
+	public Optional<Restaurante> restaurantePrimeiro() {	
+		return restauranteRepository.buscarPrimeiro();
 	}
 
 }

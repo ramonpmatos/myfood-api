@@ -87,5 +87,10 @@ public class CozinhaController {
 		}
 
 	}
+	
+	@GetMapping("/primeira")
+	public Optional<Cozinha> restaurantePrimeiro() {	
+		return cozinhaRepository.buscarPrimeiro();
+	}
 
 }
