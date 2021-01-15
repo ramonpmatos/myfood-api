@@ -1,8 +1,10 @@
 package com.delivery.myfood.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +38,14 @@ public class RestauranteController {
 
 	@GetMapping
 	public List<Restaurante> listar() {
-		return restauranteRepository.listar();
+		return restauranteRepository.findAll();
 	}
 
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
 
-		Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+		Restaurante restaurante = restauranteRepository.findById(restauranteId)
+				.orElse(null);
 
 		if (restaurante != null) {
 			return ResponseEntity.ok(restaurante);
@@ -54,30 +57,32 @@ public class RestauranteController {
 
 	@PostMapping
 	public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante) {
-		try {
-			restaurante = cadastroRestaurante.salvar(restaurante);
 
-			return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+		restaurante = cadastroRestaurante.salvar(restaurante);
 
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+
 	}
 
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, 
 			@RequestBody Restaurante restaurante) {
+		try {
+			Restaurante restauranteAtual = restauranteRepository.findById(restauranteId)
+					.orElse(null);
 
-		Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+			if (restauranteAtual != null) {
+				BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
+				restauranteAtual = cadastroRestaurante.salvar(restauranteAtual);
 
-		if (restauranteAtual != null) {
-			BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
-			restauranteAtual = cadastroRestaurante.salvar(restauranteAtual);
+				return ResponseEntity.ok(restauranteAtual);
+			}
 
-			return ResponseEntity.ok(restauranteAtual);
+			return ResponseEntity.notFound().build();
+
+		} catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-
-		return ResponseEntity.notFound().build();
 
 	}
 
@@ -85,7 +90,8 @@ public class RestauranteController {
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
 			@RequestBody Map<String, Object> campos) {
 
-		Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+		Restaurante restauranteAtual = restauranteRepository.findById(restauranteId)
+				.orElse(null);
 
 		if (restauranteAtual == null) {
 			return ResponseEntity.notFound().build();
@@ -100,20 +106,32 @@ public class RestauranteController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
 		
-//		System.out.println(restauranteOrigem.toString());
-		
 		dadosOrigem.forEach((nomePropriedade, valorPropriedade) ->{
 			Field field = org.springframework.util.ReflectionUtils.findField(Restaurante.class, nomePropriedade);
 			field.setAccessible(true);
 			
 			Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
 			
-//			System.out.println(nomePropriedade +" = "+ valorPropriedade + " = " + novoValor);
 			
 			ReflectionUtils.setField(field, restauranteDestino, novoValor);
 			
-		});
-		
+		});		
+	}
+	
+	@GetMapping("/teste")
+	public List<Restaurante> teste(String nome, 
+			BigDecimal taxaFreteInicial,BigDecimal taxaFreteFinal) {
+		return restauranteRepository.find(nome,taxaFreteInicial,taxaFreteFinal);
+	}
+	
+	@GetMapping("/com-frete-gratis")
+	public List<Restaurante> restauranteComFreteGratis(String nome) {
+		return restauranteRepository.findComFreteGratis(nome);
+	}
+	
+	@GetMapping("/primeiro")
+	public Optional<Restaurante> restaurantePrimeiro() {	
+		return restauranteRepository.buscarPrimeiro();
 	}
 
 }

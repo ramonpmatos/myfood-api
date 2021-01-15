@@ -1,13 +1,10 @@
 package com.delivery.myfood.domain.repository;
 
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
 import com.delivery.myfood.domain.model.Cozinha;
 
-public interface CozinhaRepository {
+@Repository
+public interface CozinhaRepository extends CustomJpaRepository<Cozinha, Long> {
 
-	List<Cozinha> listar();
-	Cozinha buscar(Long id);
-	Cozinha salvar(Cozinha cozinha);
-	void remover(Long id);
 }
