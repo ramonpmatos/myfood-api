@@ -11,19 +11,19 @@ import lombok.Data;
 @Embeddable
 public class Endereco {
 
-	@Column(name = "endereo_cep")
+	@Column(name = "endereco_cep")
 	private String cep;
 	
-	@Column(name = "endereo_logradouro")
+	@Column(name = "endereco_logradouro")
 	private String logradouro;
 	
-	@Column(name = "endereo_numero")
+	@Column(name = "endereco_numero")
 	private String numero;
 	
-	@Column(name = "endereo_complemento")
+	@Column(name = "endereco_complemento")
 	private String complemento;
 	
-	@Column(name = "endereo_bairro")
+	@Column(name = "endereco_bairro")
 	private String bairro;
 	
 	@ManyToOne
