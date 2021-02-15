@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,10 +40,9 @@ public class EstadoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Estado> adicionar(@RequestBody Estado estado) {
-		estado = cadastroEstado.salvar(estado);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(estado);
+	@ResponseStatus(HttpStatus.CREATED)
+	public Estado adicionar(@RequestBody Estado estado) {
+		return cadastroEstado.salvar(estado);
 	}
 
 	@PutMapping("/{estadoId}")

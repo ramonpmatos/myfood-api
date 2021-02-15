@@ -1,10 +1,8 @@
 package com.delivery.myfood.api.controller;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,27 +78,9 @@ public class RestauranteController {
 			field.setAccessible(true);
 			
 			Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
-			
-			
+				
 			ReflectionUtils.setField(field, restauranteDestino, novoValor);
 			
 		});		
 	}
-	
-	@GetMapping("/teste")
-	public List<Restaurante> teste(String nome, 
-			BigDecimal taxaFreteInicial,BigDecimal taxaFreteFinal) {
-		return restauranteRepository.find(nome,taxaFreteInicial,taxaFreteFinal);
-	}
-	
-	@GetMapping("/com-frete-gratis")
-	public List<Restaurante> restauranteComFreteGratis(String nome) {
-		return restauranteRepository.findComFreteGratis(nome);
-	}
-	
-	@GetMapping("/primeiro")
-	public Optional<Restaurante> restaurantePrimeiro() {	
-		return restauranteRepository.buscarPrimeiro();
-	}
-
 }
