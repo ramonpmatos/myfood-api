@@ -19,25 +19,38 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> handleEntidaEntidadeNaoEncontradaException(
 			EntidadeNaoEncontradaException ex, WebRequest request){
 		
-		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		HttpStatus status = HttpStatus.NOT_FOUND;
 		ProblemType problemType = ProblemType.ENTIDADE_NAO_ENCONTRADA;
 		String detail = ex.getMessage();
 		
-		Problem problem = createProblemBuilder(httpStatus, problemType, detail).build();
+		Problem problem = createProblemBuilder(status, problemType, detail).build();
 		
-		return handleExceptionInternal(ex, problem, null, HttpStatus.NOT_FOUND, request);
+		return handleExceptionInternal(ex, problem, null, status, request);
 	}
 	
 	@ExceptionHandler(EntidadeEmUsoException.class)
 	public ResponseEntity<?> handleEntidadeEmUsoException(
 			EntidadeEmUsoException ex, WebRequest request){
-		return handleExceptionInternal(ex, ex.getMessage(), null, HttpStatus.CONFLICT, request);
+		
+		HttpStatus status = HttpStatus.CONFLICT;
+		ProblemType problemType = ProblemType.ENTIDADE_EM_USO;
+		String detail = ex.getMessage();
+		
+		Problem problem = createProblemBuilder(status, problemType, detail).build();
+		
+		return handleExceptionInternal(ex, problem, null, status, request);
 	}
 	
 	@ExceptionHandler(NegocioException.class)
 	public ResponseEntity<?> handleNegocioException(
 			EntidadeNaoEncontradaException ex, WebRequest request){
-		return handleExceptionInternal(ex, ex.getMessage(), null, HttpStatus.BAD_REQUEST, request);
+		
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		ProblemType problemType = ProblemType.ERRO_NEGOCIO;
+		String detail = ex.getMessage();
+		
+		Problem problem = createProblemBuilder(status, problemType, detail).build();
+		return handleExceptionInternal(ex, problem, null, status, request);
 	}
 	
 	@Override
