@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.delivery.myfood.domain.exception.EntidadeEmUsoException;
@@ -32,9 +33,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		Throwable rootCause = ExceptionUtils.getRootCause(ex);
 		
 		if (rootCause instanceof InvalidFormatException) {
-			return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
+			return handleInvalidFormat((InvalidFormatException) rootCause, headers, status, request);
 		} else if (rootCause instanceof PropertyBindingException) {
-			return handlePropertyBindingException((PropertyBindingException) rootCause, headers, status, request);
+			return handlePropertyBinding((PropertyBindingException) rootCause, headers, status, request);
 		}
 		
 		ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
@@ -45,7 +46,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, null, status, request);
 	}
 	
-	private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex,
+	private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
 		String path = joinPath(ex.getPath());
@@ -60,7 +61,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, headers, status, request);
 	}
 
-	private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
+	private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
 		String path = joinPath(ex.getPath());
@@ -101,13 +102,26 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 	    return handleExceptionInternal(ex, problem, headers, status, request);
 	}
+	
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, 
+	        HttpHeaders headers, HttpStatus status, WebRequest request) {
+	    
+	    ProblemType problemType = ProblemType.RECURSO_NAO_ENCONTRADO;
+	    String detail = String.format("O recurso %s, que você tentou acessar, é inexistente.", 
+	            ex.getRequestURL());
+	    
+	    Problem problem = createProblemBuilder(status, problemType, detail).build();
+	    
+	    return handleExceptionInternal(ex, problem, headers, status, request);
+	}      
 
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
-	public ResponseEntity<?> handleEntidaEntidadeNaoEncontradaException(
+	public ResponseEntity<?> handleEntidaEntidadeNaoEncontrada(
 			EntidadeNaoEncontradaException ex, WebRequest request){
 		
 		HttpStatus status = HttpStatus.NOT_FOUND;
-		ProblemType problemType = ProblemType.ENTIDADE_NAO_ENCONTRADA;
+		ProblemType problemType = ProblemType.RECURSO_NAO_ENCONTRADO;
 		String detail = ex.getMessage();
 		
 		Problem problem = createProblemBuilder(status, problemType, detail).build();
@@ -116,7 +130,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(EntidadeEmUsoException.class)
-	public ResponseEntity<?> handleEntidadeEmUsoException(
+	public ResponseEntity<?> handleEntidadeEmUso(
 			EntidadeEmUsoException ex, WebRequest request){
 		
 		HttpStatus status = HttpStatus.CONFLICT;
@@ -129,7 +143,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(NegocioException.class)
-	public ResponseEntity<?> handleNegocioException(
+	public ResponseEntity<?> handleNegocio(
 			EntidadeNaoEncontradaException ex, WebRequest request){
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
