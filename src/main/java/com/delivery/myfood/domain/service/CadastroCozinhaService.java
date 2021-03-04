@@ -5,14 +5,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.delivery.myfood.domain.exception.CozinhaNaoEncontradaException;
 import com.delivery.myfood.domain.exception.EntidadeEmUsoException;
-import com.delivery.myfood.domain.exception.EntidadeNaoEncontradaException;
 import com.delivery.myfood.domain.model.Cozinha;
 import com.delivery.myfood.domain.repository.CozinhaRepository;
 
 @Service
 public class CadastroCozinhaService {
-
+	
+	private static final String MSG_COZINHA_EM_USO 
+		= "Cozinha de código %d não pode ser removida, pois está em uso.";
+	
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
@@ -26,13 +29,17 @@ public class CadastroCozinhaService {
 			cozinhaRepository.deleteById(cozinhaId);
 
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe um cadastro de cozinha com código %d", cozinhaId));
+			throw new CozinhaNaoEncontradaException(cozinhaId);
 
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-					String.format("Cozinha de código %d não pode ser removida, pois está em uso.", cozinhaId));
+					String.format(MSG_COZINHA_EM_USO, cozinhaId));
 		}
+	}
+	
+	public Cozinha buscarOuFalhar(Long cozinhaId) {
+		return cozinhaRepository.findById(cozinhaId)
+				.orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
 	}
 
 }

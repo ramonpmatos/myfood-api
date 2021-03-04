@@ -1,9 +1,9 @@
 package com.delivery.myfood.domain.exception;
 
-public class EntidadeNaoEncontradaException extends RuntimeException {
+public abstract class EntidadeNaoEncontradaException extends NegocioException {
 
 	private static final long serialVersionUID = 1L;
-	
+		
 	public EntidadeNaoEncontradaException(String mensagem) {
 		super(mensagem);
 	}
