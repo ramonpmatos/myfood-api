@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.delivery.myfood.Groups;
+import com.delivery.myfood.core.validation.Groups;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

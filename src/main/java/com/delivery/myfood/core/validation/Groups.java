@@ -1,4 +1,4 @@
-package com.delivery.myfood;
+package com.delivery.myfood.core.validation;
 
 public interface Groups {
 	
