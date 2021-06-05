@@ -100,7 +100,7 @@ public class RestauranteController {
 			Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
 			
 			dadosOrigem.forEach((nomePropriedade, valorPropriedade) ->{
-				Field field = org.springframework.util.ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+				Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
 				field.setAccessible(true);
 				
 				Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
