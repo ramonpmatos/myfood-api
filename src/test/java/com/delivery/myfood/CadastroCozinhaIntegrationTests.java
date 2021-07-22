@@ -19,7 +19,7 @@ class CadastroCozinhaIntegrationTests {
 	private CadastroCozinhaService cadastroCozinha;
 	
 	@Test
-	void testarCadastroCozinhaComSUcesso() {
+	void deveAtribuirIdQuandoCadastrarCozinhaComDadosCorretos() {
 		Cozinha novaCozinha = new Cozinha();
 		novaCozinha.setNome("Japonesa");
 		
@@ -30,7 +30,7 @@ class CadastroCozinhaIntegrationTests {
 	}
 	
 	@Test
-	void testarCadastroCozinhaSemNome() {
+	void deveFalharQaundoCadastrarCozinhaSemNome() {
 		Cozinha novaCozinha = new Cozinha();
 		novaCozinha.setNome(null);
 		
