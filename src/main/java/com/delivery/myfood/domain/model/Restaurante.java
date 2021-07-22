@@ -16,15 +16,25 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.delivery.myfood.core.validation.Groups;
+import com.delivery.myfood.core.validation.ValorZeroIncluiDescricao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@ValorZeroIncluiDescricao(valorField = "taxaFrete", 
+	descricaoField = "nome", descricaoObrigatoria = "Frete Grátis")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
@@ -35,15 +45,19 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Nome é obrigatório")
 	@Column(nullable = false)
 	private String nome;
 
+	@NotNull
+	@PositiveOrZero
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;
 
-//	@JsonIgnore
-//	@JsonIgnoreProperties({"hibernateLazyInitializer"})
-	@ManyToOne //(fetch = FetchType.LAZY)
+	@Valid
+	@NotNull
+	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
+	@ManyToOne
 	@JoinColumn(nullable = false)
 	private Cozinha cozinha;
 
