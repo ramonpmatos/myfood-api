@@ -1,6 +1,7 @@
 package com.delivery.myfood;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -10,18 +11,21 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CadastroCozinhaIT {
+public class CadastroCozinhaIT {
 
 	@LocalServerPort
 	private int port;
 	
+	@BeforeEach
+	public void setup() {
+		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+		RestAssured.port = port;
+		RestAssured.basePath = "/cozinhas";
+	}
+	
 	@Test
 	public void deveRetornarStatus200QuandoConsultarCozinhas() {
-		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-		
 		RestAssured.given()
-			.basePath("/cozinhas")
-			.port(port)
 			.accept(ContentType.JSON)
 		.when()
 			.get()
@@ -31,11 +35,7 @@ class CadastroCozinhaIT {
 	
 	@Test
 	public void deveConter4CozinhasQuandoConsultarCozinhas() {
-		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-		
 		RestAssured.given()
-			.basePath("/cozinhas")
-			.port(port)
 			.accept(ContentType.JSON)
 		.when()
 			.get()
