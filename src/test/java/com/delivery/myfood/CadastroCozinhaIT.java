@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import com.delivery.myfood.domain.model.Cozinha;
 import com.delivery.myfood.domain.repository.CozinhaRepository;
 import com.delivery.myfood.util.DatabaseCleaner;
+import com.delivery.myfood.util.ResourceUtils;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -22,6 +23,8 @@ import io.restassured.http.ContentType;
 @TestPropertySource("/application-test.properties")
 public class CadastroCozinhaIT {
 
+	private static final int COZINHA_ID_INEXISTENTE = 100;
+	
 	@LocalServerPort
 	private int port;
 
@@ -31,11 +34,17 @@ public class CadastroCozinhaIT {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
+	private Cozinha cozinhaIndiana;
+	private int quantidadeCozinhasCadastradas;
+	private String jsonCorretoCozinhaChinesa;
+	
 	@BeforeEach
 	public void setup() {
 		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 		RestAssured.port = port;
 		RestAssured.basePath = "/cozinhas";
+		jsonCorretoCozinhaChinesa = ResourceUtils.getContentFromResource(
+				"/json/correto/cozinha-chinesa.json");
 		
 		databaseCleaner.clearTables();
 		this.prepararDados();
@@ -52,16 +61,14 @@ public class CadastroCozinhaIT {
 	}
 	
 	@Test
-	public void deveConter2CozinhasQuandoConsultarCozinhas() {
+	public void deveRetornarQuantidadeCorretaDeCozinhasQuandoConsultarCozinhas() {
 		RestAssured.given()
 			
 			.accept(ContentType.JSON)
 		.when()
 			.get()
 		.then()
-			.body("", Matchers.hasSize(2))
-			.body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
-			
+			.body("", Matchers.hasSize(this.quantidadeCozinhasCadastradas));			
 	}
 	
 	@Test
@@ -79,7 +86,7 @@ public class CadastroCozinhaIT {
 	@Test
 	public void deveRetornarStatus404QuandoConsultarCozinhasInexistente() {
 		RestAssured.given()
-		.pathParam("cozinhaId", 100)
+		.pathParam("cozinhaId", COZINHA_ID_INEXISTENTE)
 			.accept(ContentType.JSON)
 		.when()
 			.get("/{cozinhaId}")
@@ -90,7 +97,7 @@ public class CadastroCozinhaIT {
 	@Test
 	public void deveRetornarStatus201QuandoCadastrarCozinhas() {
 		RestAssured.given()
-			.body("{ \"nome\": \"Chinesa\" }")
+			.body(jsonCorretoCozinhaChinesa)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 		.when()
@@ -104,9 +111,11 @@ public class CadastroCozinhaIT {
 		cozinha1.setNome("Tailandesa");
 		cozinhaRepository.save(cozinha1);
 		
-		Cozinha cozinha2 = new Cozinha();
-		cozinha2.setNome("Indiana");
-		cozinhaRepository.save(cozinha2);
+		cozinhaIndiana = new Cozinha();
+		cozinhaIndiana.setNome("Indiana");
+		cozinhaRepository.save(cozinhaIndiana);
+		
+		this.quantidadeCozinhasCadastradas = (int) cozinhaRepository.count();
 	}
 
 }
