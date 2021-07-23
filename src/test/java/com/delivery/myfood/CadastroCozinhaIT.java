@@ -15,7 +15,7 @@ import com.delivery.myfood.domain.model.Cozinha;
 import com.delivery.myfood.domain.service.CadastroCozinhaService;
 
 @SpringBootTest
-class CadastroCozinhaIntegrationTests {
+class CadastroCozinhaIT {
 
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
