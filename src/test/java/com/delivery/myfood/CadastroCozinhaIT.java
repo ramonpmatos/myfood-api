@@ -1,6 +1,5 @@
 package com.delivery.myfood;
 
-import org.flywaydb.core.Flyway;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+
+import com.delivery.myfood.domain.model.Cozinha;
+import com.delivery.myfood.domain.repository.CozinhaRepository;
+import com.delivery.myfood.util.DatabaseCleaner;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -19,9 +22,12 @@ public class CadastroCozinhaIT {
 
 	@LocalServerPort
 	private int port;
+
+	@Autowired
+	private DatabaseCleaner databaseCleaner;
 	
 	@Autowired
-	private Flyway flyway;
+	private CozinhaRepository cozinhaRepository;
 	
 	@BeforeEach
 	public void setup() {
@@ -29,7 +35,8 @@ public class CadastroCozinhaIT {
 		RestAssured.port = port;
 		RestAssured.basePath = "/cozinhas";
 		
-		flyway.migrate();
+		databaseCleaner.clearTables();
+		this.prepararDados();
 	}
 	
 	@Test
@@ -43,13 +50,13 @@ public class CadastroCozinhaIT {
 	}
 	
 	@Test
-	public void deveConter4CozinhasQuandoConsultarCozinhas() {
+	public void deveConter2CozinhasQuandoConsultarCozinhas() {
 		RestAssured.given()
 			.accept(ContentType.JSON)
 		.when()
 			.get()
 		.then()
-			.body("", Matchers.hasSize(4))
+			.body("", Matchers.hasSize(2))
 			.body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
 	}
 	
@@ -63,6 +70,16 @@ public class CadastroCozinhaIT {
 			.post()
 		.then()
 			.statusCode(HttpStatus.CREATED.value());
+	}
+	
+	private void prepararDados() {
+		Cozinha cozinha1 = new Cozinha();
+		cozinha1.setNome("Tailandesa");
+		cozinhaRepository.save(cozinha1);
+		
+		Cozinha cozinha2 = new Cozinha();
+		cozinha2.setNome("Indiana");
+		cozinhaRepository.save(cozinha2);
 	}
 
 }
