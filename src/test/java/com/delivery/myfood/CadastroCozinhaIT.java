@@ -1,5 +1,7 @@
 package com.delivery.myfood;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,12 +54,37 @@ public class CadastroCozinhaIT {
 	@Test
 	public void deveConter2CozinhasQuandoConsultarCozinhas() {
 		RestAssured.given()
+			
 			.accept(ContentType.JSON)
 		.when()
 			.get()
 		.then()
 			.body("", Matchers.hasSize(2))
 			.body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
+			
+	}
+	
+	@Test
+	public void deveRetornarRespostasEStatusCorretoQuandoConsultarCozinhasExistente() {
+		RestAssured.given()
+		.pathParam("cozinhaId", 2)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/{cozinhaId}")
+		.then()
+			.statusCode(HttpStatus.OK.value())
+			.body("nome", equalTo("Indiana"));
+	}
+	
+	@Test
+	public void deveRetornarStatus404QuandoConsultarCozinhasInexistente() {
+		RestAssured.given()
+		.pathParam("cozinhaId", 100)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/{cozinhaId}")
+		.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
 	}
 	
 	@Test
